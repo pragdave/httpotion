@@ -1,8 +1,7 @@
 defmodule HTTPotion.Base do
-  defmacro __using__(_) do
+  defmacro __using__(_opts) do
     quote do
       def start do
-        Enum.each [:ssl, :ibrowse], &Application.Behaviour.start(&1)
       end
 
       def process_url(url) do
@@ -90,11 +89,11 @@ defmodule HTTPotion.Base do
           {:ibrowse_req_id, id} ->
             HTTPotion.AsyncResponse[id: id]
           {:error, {:conn_failed, {:error, reason}}} ->
-            raise HTTPotion.HTTPError[message: to_string(reason)]
+            raise HTTPotion.HTTPError, message: to_string(reason)
           {:error, :conn_failed} ->
-            raise HTTPotion.HTTPError[message: "conn_failed"]
+            raise HTTPotion.HTTPError, message: "conn_failed"
           {:error, reason} ->
-            raise HTTPotion.HTTPError[message: to_string(reason)]
+            raise HTTPotion.HTTPError, message: to_string(reason)
         end
       end
 
@@ -133,5 +132,6 @@ defmodule HTTPotion do
 
   defexception HTTPError, message: nil
 
-  use HTTPotion.Base
+
+  use HTTPotion.Base, []
 end
